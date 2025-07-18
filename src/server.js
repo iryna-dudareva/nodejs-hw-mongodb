@@ -1,7 +1,10 @@
 import cors from 'cors';
 import pino from 'pino-http';
 import express from 'express';
-import contactsRouter from './routes/contacts.routes.js'
+import contactsRouter from './routes/contacts.routes.js';
+import { errorHandler } from './middlewares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
+
 
 export const setUpServer = () => {
     const app = express();
@@ -16,11 +19,8 @@ export const setUpServer = () => {
         res.json({ message: "workiing!" });
     });
 
-    app.use((req, res) => {
-        res.status(404).json({
-            message: "Not found"
-        });
-    });
+    app.use(notFoundHandler);
+    app.use(errorHandler);
 
     return app;
 };
