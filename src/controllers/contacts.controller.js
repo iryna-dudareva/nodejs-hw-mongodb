@@ -2,11 +2,45 @@ import { getAllContacts, getContactById, createContact, deleteContact, updateCon
 import createHttpError from 'http-errors';
 
 export const getContacts = async (req, res) => {
-        const contacts = await getAllContacts();
+    const {
+        contacts,
+        page, 
+        perPage,
+        totalItems,
+        totalPages,
+        hasPreviousPage,
+        hasNextPage,
+    } = await getAllContacts(req.query);
+    
+
+
+    if (contacts.length === 0) {
+        res.status(200).json({
+            status: 200,
+            message: 'No contacts matchind chosen criteria',
+            data: {
+                contacts,
+                page, 
+                perPage,
+                totalItems,
+                totalPages,
+                hasPreviousPage,
+                hasNextPage,
+            },
+        });
+    }
         res.status(200).json({
             status: 200,
             message: 'Successfully found contacts!',
-            data: contacts,
+            data: {
+                contacts, 
+                page,
+                perPage,
+                totalItems,
+                totalPages,
+                hasPreviousPage,
+                hasNextPage,
+            },
         });
 };
 
