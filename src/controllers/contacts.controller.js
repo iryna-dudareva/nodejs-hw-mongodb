@@ -2,19 +2,12 @@ import { getAllContacts, getContactById, createContact, deleteContact, updateCon
 import createHttpError from 'http-errors';
 
 export const getContacts = async (req, res) => {
-    try {
         const contacts = await getAllContacts();
         res.status(200).json({
             status: 200,
             message: 'Successfully found contacts!',
             data: contacts,
         });
-    } catch (error) {
-        res.status(500).json({
-            message: 'Server error',
-            error: error.message,
-        });
-    }
 };
 
 export const getContact = async (req, res) => {
@@ -79,7 +72,7 @@ export const updateContact = async (req, res, next) => {
     res.status(status).json({
         status,
         message: 'Successfully updated the contact',
-        data: res.contact,
+        data: result.contact,
     });
 };
 
@@ -96,7 +89,7 @@ export const patchUpdateContact = async (req, res, next) => {
 
     res.status(200).json({
         status: 200,
-        message: 'Successfully updated(patched) the contact',
+        message: 'Successfully updated contact',
         data: result,
     });
 };
