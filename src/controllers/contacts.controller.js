@@ -10,7 +10,7 @@ export const getContacts = async (req, res) => {
         totalPages,
         hasPreviousPage,
         hasNextPage,
-    } = await getAllContacts(req.query);
+    } = await getAllContacts(req.query, req.user._id);
     
 
 
@@ -46,7 +46,7 @@ export const getContacts = async (req, res) => {
 
 export const getContact = async (req, res) => {
     const { contactId } = req.params;
-    const contact = await getContactById(contactId);
+    const contact = await getContactById(contactId, req.user._id);
 
     if (!contact) {
         throw createHttpError(404, 'Contact not found');
@@ -67,7 +67,9 @@ export const addContact = async (req, res) => {
         throw createHttpError(400, 'Empty required field(s)');
     }
 
-    const newContact = await createContact({ name, phoneNumber, email, isFavourite, contactType });
+    const userId = req.user._id;
+
+    const newContact = await createContact({ name, phoneNumber, email, isFavourite, contactType, userId });
 
     res.status(201).json({
         status: 201,
@@ -79,7 +81,7 @@ export const addContact = async (req, res) => {
 
 export const deleteContactC = async (req, res, next) => {
     const { contactId } = req.params;
-    const contact = await deleteContact(contactId);
+    const contact = await deleteContact(contactId, req.user._id);
 
     if (!contact) {
         next(createHttpError(404, 'Not found'));
@@ -92,7 +94,7 @@ export const deleteContactC = async (req, res, next) => {
 
 export const updateContact = async (req, res, next) => {
     const { contactId } = req.params;
-    const result = await updateContactById(contactId, req.body, {
+    const result = await updateContactById(contactId, req.body, req.user._id, {
         upsert: true,
     });
 
@@ -113,7 +115,7 @@ export const updateContact = async (req, res, next) => {
 
 export const patchUpdateContact = async (req, res, next) => {
     const { contactId } = req.params;
-    const result = await updateContactById(contactId, req.body); 
+    const result = await updateContactById(contactId, req.body, req.user._id); 
 
     if (!result) {
         next(createHttpError(404, 'Not found'));

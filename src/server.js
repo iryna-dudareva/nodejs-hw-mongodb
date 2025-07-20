@@ -1,19 +1,20 @@
 import cors from 'cors';
 import pino from 'pino-http';
 import express from 'express';
-import contactsRouter from './routes/contacts.routes.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import router from './routes/index.js';
+import cookieParser from 'cookie-parser';
 
 
 export const setUpServer = () => {
     const app = express();
 
+    app.use(cookieParser());
     app.use(cors());
     app.use(pino());
     app.use(express.json());
-    app.use(contactsRouter);
-
+    app.use('/api', router);
 
     app.get('/', (req, res) => {
         res.json({ message: "workiing!" });
