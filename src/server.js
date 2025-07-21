@@ -5,6 +5,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import router from './routes/index.js';
 import cookieParser from 'cookie-parser';
+import { UPLOAD_DIR } from './constants/index.js';
 
 
 export const setUpServer = () => {
@@ -14,7 +15,9 @@ export const setUpServer = () => {
     app.use(cors());
     app.use(pino());
     app.use(express.json());
-    app.use('/api', router);
+    app.use('/uploads', express.static(UPLOAD_DIR));
+    app.use(router);
+ 
 
     app.get('/', (req, res) => {
         res.json({ message: "workiing!" });

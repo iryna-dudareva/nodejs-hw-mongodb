@@ -1,5 +1,6 @@
 import { getAllContacts, getContactById, createContact, deleteContact, updateContactById } from '../services/contacts.js';
 import createHttpError from 'http-errors';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 
 export const getContacts = async (req, res) => {
     const {
@@ -115,7 +116,14 @@ export const updateContact = async (req, res, next) => {
 
 export const patchUpdateContact = async (req, res, next) => {
     const { contactId } = req.params;
-    const result = await updateContactById(contactId, req.body, req.user._id); 
+    const photo = req.file;
+    let photoUrl;
+
+  if (photo) {
+    photoUrl = await saveFileToUploadDir(photo);
+  }
+
+    const result = await updateContactById(contactId, { ...req.body, photo: photoUrl, }); 
 
     if (!result) {
         next(createHttpError(404, 'Not found'));
@@ -126,6 +134,6 @@ export const patchUpdateContact = async (req, res, next) => {
     res.status(200).json({
         status: 200,
         message: 'Successfully updated contact',
-        data: result,
+        data: result.contact,
     });
 };
