@@ -7,6 +7,7 @@ import router from './routes/index.js';
 import cookieParser from 'cookie-parser';
 
 
+
 export const setUpServer = () => {
     const app = express();
 
@@ -17,7 +18,7 @@ export const setUpServer = () => {
     app.use(router);
 
     app.get('/', (req, res) => {
-        res.json({ message: "workiing!" });
+        res.json({ message: "working!" });
     });
 
     app.use(notFoundHandler);
