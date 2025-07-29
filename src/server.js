@@ -30,7 +30,7 @@ export const setUpServer = () => {
 };
 
 export const startServer = () => {
-    const PORT = process.env.PORT;
+    const PORT = process.env.PORT || 3000;
     const app = setUpServer();
     app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`);
