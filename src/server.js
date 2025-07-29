@@ -20,7 +20,7 @@ export const setUpServer = () => {
  
 
     app.get('/', (req, res) => {
-        res.json({ message: "workiing!" });
+        res.json({ message: "working!" });
     });
 
     app.use(notFoundHandler);

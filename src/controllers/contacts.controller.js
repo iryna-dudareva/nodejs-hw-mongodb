@@ -1,6 +1,6 @@
 import { getAllContacts, getContactById, createContact, deleteContact, updateContactById } from '../services/contacts.js';
 import createHttpError from 'http-errors';
-import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 export const getContacts = async (req, res) => {
     const {
@@ -16,7 +16,7 @@ export const getContacts = async (req, res) => {
 
 
     if (contacts.length === 0) {
-        res.status(200).json({
+        return res.status(200).json({
             status: 200,
             message: 'No contacts matchind chosen criteria',
             data: {
@@ -70,7 +70,21 @@ export const addContact = async (req, res) => {
 
     const userId = req.user._id;
 
-    const newContact = await createContact({ name, phoneNumber, email, isFavourite, contactType, userId });
+    let photoUrl = null;
+
+    if (req.file) {
+        photoUrl = await saveFileToCloudinary(req.file);
+    }
+
+    const newContact = await createContact({
+        name,
+        phoneNumber,
+        email,
+        isFavourite,
+        contactType,
+        userId,
+        photo: photoUrl,
+    });
 
     res.status(201).json({
         status: 201,
@@ -117,23 +131,23 @@ export const updateContact = async (req, res, next) => {
 export const patchUpdateContact = async (req, res, next) => {
     const { contactId } = req.params;
     const photo = req.file;
+    const userId = req.user._id;  
     let photoUrl;
 
-  if (photo) {
-    photoUrl = await saveFileToUploadDir(photo);
-  }
+    if (photo) {
+        photoUrl = await saveFileToCloudinary(photo);
+    }
 
-    const result = await updateContactById(contactId, { ...req.body, photo: photoUrl, }); 
+    const result = await updateContactById(contactId, { ...req.body, photo: photoUrl }, userId);
 
     if (!result) {
         next(createHttpError(404, 'Not found'));
         return;
     }
 
-
     res.status(200).json({
         status: 200,
         message: 'Successfully updated contact',
-        data: result.contact,
+        data: result,
     });
 };
