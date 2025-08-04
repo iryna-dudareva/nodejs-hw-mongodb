@@ -18,7 +18,7 @@ export const getContacts = async (req, res) => {
     if (contacts.length === 0) {
         return res.status(200).json({
             status: 200,
-            message: 'No contacts matchind chosen criteria',
+            message: 'No contacts matching chosen criteria',
             data: {
                 contacts,
                 page, 
